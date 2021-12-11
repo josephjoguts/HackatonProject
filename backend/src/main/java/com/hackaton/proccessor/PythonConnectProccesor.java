@@ -16,8 +16,7 @@ public class PythonConnectProccesor {
     Tools tools;
     private Integer currPhotoCount = 0;
     private String defPhoto = "../photos/test0.png";
-    //TODO путь к папке с картинками видео
-    //TODO user default photo
+
     private void runPythonScript(String path) throws IOException {
         var p = Runtime.getRuntime().exec(String.format("python ../ml/main.py %s %s", path, defPhoto));
         BufferedReader stdInput = new BufferedReader(new
@@ -40,7 +39,7 @@ public class PythonConnectProccesor {
         BufferedImage newBi = ImageIO.read(is);
         ImageIO.write(newBi, "png", f);
         currPhotoCount++;
-        if(currPhotoCount == photoCount){
+        if(currPhotoCount.equals(photoCount)){
             runPythonScript(folder.getAbsolutePath());
         }
     }
