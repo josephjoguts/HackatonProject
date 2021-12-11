@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -23,6 +20,7 @@ public class MainController {
     Tools config;
     @Autowired
     PythonConnectProccesor proccesor;
+    @CrossOrigin
     @PostMapping(value = "/receivePhoto", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String,String>> controller(@RequestBody ClientRequest clientRequest) throws IOException {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
@@ -30,6 +28,7 @@ public class MainController {
         proccesor.processClientData(clientRequest.getPhotoCount(), clientRequest.getImageString());
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
+    @CrossOrigin
     @PostMapping(value = "/receiveDefaultPhoto", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String,String>> controller1(@RequestBody DefaultPhotoModel clientRequest) throws IOException {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
