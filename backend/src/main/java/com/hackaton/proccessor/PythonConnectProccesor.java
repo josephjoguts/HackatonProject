@@ -23,7 +23,9 @@ public class PythonConnectProccesor {
     private String defPhoto = "photos/test0.png";
     private void runPythonScript(String path) throws IOException, InterruptedException {
         File f = new File(defPhoto);
-        String pythonScript = String.format("ml/venv/Scripts./python ml/main.py %s %s", path, f.getAbsolutePath());
+        //path -> путь до папки с фотками
+        //f.getAbsol.. -> путь до default photo
+        String pythonScript = String.format("ml/venv/Scripts./python ml/run.py %s %s", path, f.getAbsolutePath());
         Process p = Runtime.getRuntime().exec(pythonScript);
         p.waitFor();
         BufferedReader stdInput = new BufferedReader(new
