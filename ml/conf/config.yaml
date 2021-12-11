@@ -1,0 +1,12 @@
+input_folder: "/input"
+template_path: "/template.jpg"
+samples_folder: "/samples"
+output_folder: "/out"
+params:
+  image_size: 256
+  threshold: 0.7
+  return_all: False
+  offset: 2
+emo_params: 
+  crop_strategy: "MTCNN"
+  image_size: 48
