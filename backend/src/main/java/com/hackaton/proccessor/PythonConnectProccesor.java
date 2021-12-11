@@ -15,10 +15,11 @@ public class PythonConnectProccesor {
     @Autowired
     Tools tools;
     private Integer currPhotoCount = 0;
-    private String defPhoto = "../photos/test0.png";
+    private String defPhoto = "photos/test0.png";
 
     private void runPythonScript(String path) throws IOException {
-        var p = Runtime.getRuntime().exec(String.format("python ../ml/main.py %s %s", path, defPhoto));
+        File f = new File(defPhoto);
+        var p = Runtime.getRuntime().exec(String.format("python ml/main.py %s %s", path, f.getAbsolutePath()));
         BufferedReader stdInput = new BufferedReader(new
                 InputStreamReader(p.getInputStream()));
 
@@ -29,12 +30,13 @@ public class PythonConnectProccesor {
     }
 
     public void processClientData(Integer photoCount, String imageString) throws IOException {
-        File folder = new File("../photos");
+        File folder = new File("photos");
         if(!folder.exists()){
-            folder.mkdirs();
+            folder.mkdir();
         }
-        File f = new File(String.format("../photos/test%d.png",currPhotoCount));
-        byte[] s = tools.getDecoder().decode(imageString);
+        String forDecode = imageString.substring(23);
+        File f = new File(String.format("photos/test%d.png",currPhotoCount));
+        byte[] s = tools.getDecoder().decode(forDecode);
         InputStream is = new ByteArrayInputStream(s);
         BufferedImage newBi = ImageIO.read(is);
         ImageIO.write(newBi, "png", f);
@@ -42,10 +44,17 @@ public class PythonConnectProccesor {
         if(currPhotoCount.equals(photoCount)){
             runPythonScript(folder.getAbsolutePath());
         }
+        if(currPhotoCount >= photoCount){
+            currPhotoCount = 0;
+        }
     }
 
     public void setDefPhoto(String defPhoto) throws IOException {
-        File f = new File("../defaultPhoto.png");
+        File folder = new File("photos");
+        if(!folder.exists()){
+            folder.mkdir();
+        }
+        File f = new File("photos/defaultPhoto.png");
         byte[] s = tools.getDecoder().decode(defPhoto);
         InputStream is = new ByteArrayInputStream(s);
         BufferedImage newBi = ImageIO.read(is);
