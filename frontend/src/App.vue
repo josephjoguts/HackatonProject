@@ -24,6 +24,47 @@
       <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="450" :height="337.5"></canvas>
     </div>
 
+    <div v-if="isCameraOpen && !isLoading" class="settings-box">
+      <div class="task-box">
+        <div class="row">
+          <h3>Task: </h3><h2>{{ curTask }}</h2>
+        </div>
+
+        <select v-model="curTask">
+          <option disabled value="">Please select one</option>
+          <option>neutral</option>
+          <option>happiness</option>
+          <option>surprise</option>
+          <option>sadness</option>
+          <option>anger</option>
+          <option>disguest</option>
+          <option>fear</option>
+        </select>
+      </div>
+
+      <div class="slider-box">
+        <div class="row">
+          <h3>Time interval: {{ interval }} ms</h3>
+        </div>
+        <vue-slider
+            ref="slider"
+            v-model="interval"
+            v-bind="options"
+        ></vue-slider>
+      </div>
+
+      <div class="slider-box">
+        <div class="row">
+          <h3>Length of video capture: {{ vidLen }} ms</h3>
+        </div>
+        <vue-slider
+            ref="slider"
+            v-model="vidLen"
+            v-bind="options2"
+        ></vue-slider>
+      </div>
+
+    </div>
     <div v-if="isCameraOpen && !isLoading" class="camera-shoot">
       <button type="button" class="button" @click="startCapturing">
         <img src="https://img.icons8.com/ios/50/000000/anonymous-mask.png"/>
@@ -46,8 +87,8 @@
 </template>
 
 <script>
-import Requester from "@/api/requester"
-
+//import Requester from "@/api/requester"
+import axios from 'axios'
 export default {
   data() {
     return {
@@ -62,6 +103,42 @@ export default {
       interval: 500,
       vidLen: 2000,
       curTask: "neutral",
+
+      options: {
+        dotSize: 14,
+        width: '100%',
+        height: 4,
+        min: 500,
+        max: 2000,
+        interval: 1,
+        disabled: false,
+        clickable: true,
+        duration: 0.5,
+        adsorb: false,
+        lazy: false,
+        tooltip: 'active',
+        tooltipPlacement: 'top',
+        enableCross: true,
+
+      },
+
+      options2: {
+        dotSize: 14,
+        width: '100%',
+        height: 4,
+        min: 2000,
+        max: 4000,
+        interval: 1,
+        disabled: false,
+        clickable: true,
+        duration: 0.5,
+        adsorb: false,
+        lazy: false,
+        tooltip: 'active',
+        tooltipPlacement: 'top',
+        enableCross: true,
+
+      }
     }
   },
 
@@ -129,9 +206,9 @@ export default {
       //const canvas = document.getElementById("photoTaken").toDataURL("image/jpeg")
       //.replace("image/jpeg", "image/octet-stream");
       //download.setAttribute("href", canvas);
-      const base64 = document.getElementById("photoTaken").toDataURL("image/jpeg")
+      return document.getElementById("photoTaken").toDataURL("image/jpeg")
       //console.log(base64)
-      return base64
+      //return base64
     },
 
     async postNewImg(cnt){
@@ -139,7 +216,13 @@ export default {
       const newImageString = this.downloadImage()
       //post to server
       try {
-        const response = Requester.postData('http://localhost:8080/receivePhoto',
+        /*const response = Requester.postData('http://localhost:8080/receivePhoto',
+            {
+              imageString: newImageString,
+              task: this.curTask,
+              photoCount: cnt
+            })*/
+        const response = await axios.post('http://localhost:8080/receivePhoto',
             {
               imageString: newImageString,
               task: this.curTask,
@@ -188,7 +271,13 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
-
+.row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
 body {
   display: flex;
   justify-content: center;
