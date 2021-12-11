@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import Requester from "@/api/requester"
 
 export default {
   data() {
@@ -56,8 +57,11 @@ export default {
       isLoading: false,
       link: '#',
       timeout: 1000,
+
+      // that is what we alter on the front for ml testing:
       interval: 500,
       vidLen: 2000,
+      curTask: "neutral",
     }
   },
 
@@ -130,10 +134,23 @@ export default {
       return base64
     },
 
-    postNewImg(){
+    async postNewImg(cnt){
       this.takePhoto()
-      this.downloadImage()
+      const newImageString = this.downloadImage()
       //post to server
+      try {
+        const response = Requester.postData('http://localhost:8080/receivePhoto',
+            {
+              imageString: newImageString,
+              task: this.curTask,
+              photoCount: cnt
+            })
+        console.log(response)
+        return response
+      } catch (e) {
+        console.log(e)
+        return e
+      }
     },
 
     startCapturing() {
@@ -142,15 +159,15 @@ export default {
       const x = this.interval
 
       setTimeout(function() {
-        console.log('x, y = ', x, y )
-        const photoNum = parseInt(y / x)
-        console.log('photoNum = ', photoNum)
+        //console.log('x, y = ', x, y )
+        const photoCount = parseInt(y / x)
+        //console.log('photoNum = ', photoCount)
         var timesRun = 0
         var intervalFn = setInterval(function(){
           console.log(timesRun)
-          clbk()
+          clbk(photoCount)
           timesRun += 1
-          if(timesRun === photoNum){
+          if(timesRun === photoCount){
             clearInterval(intervalFn)
           }
         }, 500);
