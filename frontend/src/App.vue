@@ -30,66 +30,83 @@
           <h3>Task: </h3><h2>{{ curTask }}</h2>
         </div>
 
-        <select v-model="curTask">
+        <select v-model="curTask" :disabled="isCapturing">
           <option disabled value="">Please select one</option>
           <option>neutral</option>
           <option>happiness</option>
           <option>surprise</option>
           <option>sadness</option>
           <option>anger</option>
-          <option>disguest</option>
+          <option>disgust</option>
           <option>fear</option>
         </select>
       </div>
 
-      <div class="slider-box">
+      <div class="slider-box" >
         <div class="row">
           <h3>Time interval: {{ interval }} ms</h3>
         </div>
         <vue-slider
+            :disabled="isCapturing" style="width: 100%"
             ref="slider"
             v-model="interval"
             v-bind="options"
         ></vue-slider>
       </div>
 
-      <div class="slider-box">
+      <div class="slider-box" >
         <div class="row">
           <h3>Length of video capture: {{ vidLen }} ms</h3>
         </div>
         <vue-slider
+            :disabled="isCapturing" style="width: 100%"
             ref="slider"
             v-model="vidLen"
-            v-bind="options2"
+            v-bind="options"
         ></vue-slider>
       </div>
 
+
     </div>
+    <br>
+    <small v-if="!intervalsValid">Timespan of capturing is required to be above interval</small>
     <div v-if="isCameraOpen && !isLoading" class="camera-shoot">
-      <button type="button" class="button" @click="startCapturing">
-        <img src="https://img.icons8.com/ios/50/000000/anonymous-mask.png"/>
+      <button type="button" tip="Start capturing" class="button tip"
+              :class="{pointed: !isCapturing, highlited: !isCapturing  }"
+              :disabled="isCapturing"
+              @click="startCapturing">
+        <img class="tip" :class="{pointed: !isCapturing }" src="https://img.icons8.com/ios/50/000000/anonymous-mask.png"/>
       </button>
     </div>
+    <timer v-if="isCameraOpen && !isLoading" v-model="paddedCurrentTime"></timer>
 
-    <!--    <div v-if="isCameraOpen && !isLoading" class="camera-shoot">
-          <button type="button" class="button" @click="takePhoto">
-            <img src="https://img.icons8.com/material-outlined/50/000000/camera&#45;&#45;v2.png">
-          </button>
-        </div>
+    <div class="time-is-over-box" v-if="isFinished"><h1>Time is over.</h1></div>
 
-        <div v-if="isPhotoTaken && isCameraOpen" class="camera-download">
-          <a id="downloadPhoto" download="my-photo.jpg" class="button" role="button" @click="downloadImage">
-            Download
-          </a>
-        </div>-->
   </div>
 
 </template>
 
 <script>
-//import Requester from "@/api/requester"
+
+import { useTimer } from '@/hooks/useTimer'
 import axios from 'axios'
 export default {
+  setup () {
+    const {   currentTime,
+              paddedCurrentTime,
+              initTimer,
+              stopTimer,
+              isCapturing,
+              isFinished
+          } = useTimer()
+
+    return { currentTime,
+             paddedCurrentTime,
+             initTimer,
+             stopTimer,
+             isCapturing,
+             isFinished }
+  },
   data() {
     return {
       isCameraOpen: false,
@@ -98,51 +115,26 @@ export default {
       isLoading: false,
       link: '#',
       timeout: 1000,
-
       // that is what we alter on the front for ml testing:
       interval: 500,
       vidLen: 2000,
       curTask: "neutral",
 
       options: {
-        dotSize: 14,
-        width: '100%',
-        height: 4,
         min: 500,
-        max: 2000,
-        interval: 1,
-        disabled: false,
-        clickable: true,
-        duration: 0.5,
-        adsorb: false,
-        lazy: false,
-        tooltip: 'active',
-        tooltipPlacement: 'top',
-        enableCross: true,
-
-      },
-
-      options2: {
-        dotSize: 14,
-        width: '100%',
-        height: 4,
-        min: 2000,
         max: 4000,
-        interval: 1,
-        disabled: false,
-        clickable: true,
-        duration: 0.5,
-        adsorb: false,
-        lazy: false,
-        tooltip: 'active',
-        tooltipPlacement: 'top',
-        enableCross: true,
-
-      }
+        height: 4,
+      },
     }
   },
-
+  computed: {
+    intervalsValid: function () {
+      // `this` points to the vm instance
+      return this.interval<=this.vidLen
+    }
+  },
   methods: {
+
     toggleCamera() {
       if(this.isCameraOpen) {
         this.isCameraOpen = false;
@@ -202,26 +194,13 @@ export default {
     },
 
     downloadImage() {
-      //const download = document.getElementById("downloadPhoto");
-      //const canvas = document.getElementById("photoTaken").toDataURL("image/jpeg")
-      //.replace("image/jpeg", "image/octet-stream");
-      //download.setAttribute("href", canvas);
       return document.getElementById("photoTaken").toDataURL("image/jpeg")
-      //console.log(base64)
-      //return base64
     },
 
     async postNewImg(cnt){
       this.takePhoto()
       const newImageString = this.downloadImage()
-      //post to server
       try {
-        /*const response = Requester.postData('http://localhost:8080/receivePhoto',
-            {
-              imageString: newImageString,
-              task: this.curTask,
-              photoCount: cnt
-            })*/
         const response = await axios.post('http://localhost:8080/receivePhoto',
             {
               imageString: newImageString,
@@ -237,20 +216,25 @@ export default {
     },
 
     startCapturing() {
-      const clbk = this.postNewImg
+      this.isCapturing = true
+      const _init = this.initTimer
+      const _stop = this.stopTimer
+
+      const _callback = this.postNewImg
       const y = this.vidLen
       const x = this.interval
 
+
       setTimeout(function() {
-        //console.log('x, y = ', x, y )
+        _init()
         const photoCount = parseInt(y / x)
-        //console.log('photoNum = ', photoCount)
         var timesRun = 0
         var intervalFn = setInterval(function(){
           console.log(timesRun)
-          clbk(photoCount)
+          _callback(photoCount)
           timesRun += 1
           if(timesRun === photoCount){
+            _stop()
             clearInterval(intervalFn)
           }
         }, 500);
@@ -265,11 +249,30 @@ export default {
 
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Inter, Roboto, Oxygen, Fira Sans, Helvetica Neue, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+.slider-box{
+  width: 100%;
+}
+.tip:hover::after {
+  content: attr(tip);
+  position: absolute;
+  left: 120%; top: 100%;
+  z-index: 1;
+  background: rgba(120, 210, 182, 0.48);
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  padding: 5px 10px; /* Поля */
+
+  border-radius: 4px;
+}
+small {
+  color: #e53935;
+  font-size: 16px;
 }
 .row {
   display: flex;
@@ -332,7 +335,19 @@ body {
       }
     }
   }
-
+  .highlited:hover {
+    box-shadow:
+        0 0 7px #308677,
+        0 0 9px #308677,
+        0 0 11px #6cccaa,
+        0 0 13px #0fa;
+    animation-duration: 1s;
+  }
+  .pointed:hover {
+    cursor: pointer;
+    transform: scale(1.01);
+    animation-duration: 1s;
+  }
   .camera-loading {
     overflow: hidden;
     height: 100%;
