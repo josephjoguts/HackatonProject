@@ -30,7 +30,7 @@ export default {
   text-align: left;
   //width: 50%;
   position: absolute;
-  left: 40%;
+  left: 30%;
   /*margin-left: auto;
   margin-right: auto;*/
   border-left: 5px solid #00d1b2;
