@@ -68,11 +68,11 @@ public class PythonConnectProccesor {
     }
 
     public void setDefPhoto(String defPhoto) throws IOException {
-        File folder = new File("photos");
+        File folder = new File("default");
         if(!folder.exists()){
             folder.mkdir();
         }
-        File f = new File("photos/defaultPhoto.jpg");
+        File f = new File("default/defaultPhoto.jpg");
         byte[] s = tools.getDecoder().decode(defPhoto.substring(23));
         InputStream is = new ByteArrayInputStream(s);
         BufferedImage newBi = ImageIO.read(is);
