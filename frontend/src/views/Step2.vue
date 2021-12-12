@@ -41,8 +41,6 @@
             <option>surprise</option>
             <option>sadness</option>
             <option>anger</option>
-            <option>disgust</option>
-            <option>fear</option>
           </select>
         </div>
 
@@ -89,7 +87,17 @@
     </div>
 
 
-    <div class="time-is-over-box" v-if="isFinished"><h1>Time is over.</h1></div>
+    <div class="time-is-over-box" v-if="isFinished">
+      <h1>Time is over.</h1>
+      <h3 v-if="verified==='Yes'">Seems like you are a human!</h3>
+      <h3 v-else>Seems like you are NOT a human!</h3>
+
+      <div>Similarity with etalon: {{mean_dist}} </div>
+      <div>The task was: {{curTask}} </div>
+      <div>Server recognised: {{emo}} </div>
+      <div>Number of photos where face was recognised: {{num_emo_faces}} </div>
+      <div>Similarity between captured photos: {{mean_sim_dist}} </div>
+    </div>
 
   </div>
 
@@ -118,6 +126,12 @@ export default {
   },
   data() {
     return {
+      verified: 'NaN',
+      mean_dist: 0,
+      emo: "NaN",
+      num_emo_faces: 0,
+      mean_sim_dist: 0,
+
       isCameraOpen: false,
       isPhotoTaken: false,
       isShotPhoto: false,
@@ -224,7 +238,7 @@ export default {
       }
     },
 
-    startCapturing() {
+    async startCapturing() {
       this.isCapturing = true
       const _init = this.initTimer
       const _stop = this.stopTimer
@@ -233,18 +247,35 @@ export default {
       const y = this.vidLen
       const x = this.interval
 
+      const context = this
 
       setTimeout(function() {
         _init()
         const photoCount = parseInt(y / x)
         var timesRun = 0
-        var intervalFn = setInterval(function(){
+        var intervalFn = setInterval(async function(){
           console.log(timesRun)
-          _callback(photoCount)
           timesRun += 1
+          await _callback(photoCount)
+
           if(timesRun === photoCount){
-            _stop()
             clearInterval(intervalFn)
+
+            let response = null
+            try {
+              console.log('waiting status...')
+              response = await axios.get('http://localhost:8080/status')
+              _stop()
+              console.log(response)
+              context.verified = response.data.verified
+              context.mean_dist = response.data.mean_dist
+              context.emo = response.data.emo
+              context.num_emo_faces = response.data.num_emo_faces
+              context.mean_sim_dist = response.data.mean_sim_dist
+            } catch (e) {
+              response = e
+            }
+
           }
         }, 500);
 
