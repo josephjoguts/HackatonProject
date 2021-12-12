@@ -7,6 +7,7 @@ import json
 import operator
 import glob
 from PIL import Image
+import time
 @hydra.main(config_path="conf", config_name="config")
 def app(cfg : DictConfig) -> None:
     dir_name = os.path.dirname(os.path.abspath(__file__))
@@ -20,12 +21,16 @@ def app(cfg : DictConfig) -> None:
     output_path = dir_name + cfg.output_folder
 
     images = []
+    start_time = time.time()
     template_im = Image.open(template_path)
     for i,img_path in enumerate(glob.glob(samples_path + "/*.jpg")):
         img = Image.open(img_path)
         images.append(img)
+    period1 = time.time() - start_time
     prediction = model.gen_simularity_by_template(template_im, images)
+    period2 = time.time() - period1
     emo_pred = emo_model.predict_from_folder(images)
+    period3 = time.time() - period2
     if (len(emo_pred[0]) == 0):
         max_emo = 'neutral'
     else:
@@ -34,6 +39,9 @@ def app(cfg : DictConfig) -> None:
         max_emo = 'neutral'
     prediction["emo"] = max_emo
     prediction["num_emo_faces"] = emo_pred[1]
+    prediction["open_images_time"] = period1
+    prediction["face_recognition_time"] = period2
+    prediction["emotion_recognition_time"] = period3
     print(prediction)
     print(prediction)
 
