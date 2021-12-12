@@ -72,10 +72,10 @@
     <small v-if="!intervalsValid">Timespan of capturing is required to be above interval</small>
     <div v-if="isCameraOpen && !isLoading" class="camera-shoot">
       <button type="button" tip="Start capturing" class="button tip"
-              :class="{pointed: !isCapturing, highlited: !isCapturing  }"
-              :disabled="isCapturing"
+              :class="{pointed: !isCapturing&&intervalsValid, highlited: !isCapturing&&intervalsValid  }"
+              :disabled="isCapturing||!intervalsValid"
               @click="startCapturing">
-        <img class="tip" :class="{pointed: !isCapturing }" src="https://img.icons8.com/ios/50/000000/anonymous-mask.png"/>
+        <img class="tip" :class="{pointed: !isCapturing&&intervalsValid }" src="https://img.icons8.com/ios/50/000000/anonymous-mask.png"/>
       </button>
     </div>
     <timer v-if="isCameraOpen && !isLoading" v-model="paddedCurrentTime"></timer>

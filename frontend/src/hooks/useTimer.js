@@ -34,7 +34,7 @@ export function useTimer() {
         return {
             min: pad(currentTime.value.min, 2),
             sec: pad(currentTime.value.sec, 2),
-            mill: currentTime.value.mill.toString(),
+            mill: pad(currentTime.value.mill,3),
         }
     })
 
