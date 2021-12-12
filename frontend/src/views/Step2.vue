@@ -97,7 +97,7 @@
       <div>Server recognised: {{emo}} </div>
 
       <br>
-      <h2 v-if="(verified==='Yes')&&(mean_dist==curTask)">YOU ARE LEGIT!</h2>
+      <h2 v-if="(verified==='Yes')&&(emo===curTask)">YOU ARE LEGIT!</h2>
       <h2 v-else>You are NOT totally legit.</h2>
       <br>
 
@@ -277,7 +277,7 @@ export default {
 
           if(timesRun >= photoCount){
             clearInterval(intervalFn)
-            _stop()
+
             let response = null
             try {
               console.log('waiting status...')
