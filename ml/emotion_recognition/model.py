@@ -45,10 +45,3 @@ class Face_Emotion_CNN(nn.Module):
 
   def count_parameters(self):
     return sum(p.numel() for p in self.parameters() if p.requires_grad)
-
-
-if __name__ == '__main__':
-    bn_model = Face_Emotion_CNN()
-    x = torch.randn(1,1,48,48)
-    print('Shape of output = ',bn_model(x).shape)
-    print('No of Parameters of the BatchNorm-CNN Model =',bn_model.count_parameters())

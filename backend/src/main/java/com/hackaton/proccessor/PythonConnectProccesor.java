@@ -28,6 +28,7 @@ public class PythonConnectProccesor {
 
         Process p = Runtime.getRuntime().exec(pythonScript);
         p.waitFor();
+
         BufferedReader stdInput = new BufferedReader(new
                 InputStreamReader(p.getInputStream()));
 
@@ -42,6 +43,8 @@ public class PythonConnectProccesor {
         //status.setMessage(answer);
         //status.setStatus(Statuses.READY);
     }
+      
+     
 
     public void processClientData(Integer photoCount, String imageString) throws IOException, InterruptedException {
         File folder = new File("photos");

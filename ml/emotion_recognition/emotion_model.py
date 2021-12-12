@@ -2,7 +2,6 @@ import cv2
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
-import matplotlib.pyplot as plt
 from .model import *
 from facenet_pytorch import MTCNN
 from random import choice
@@ -32,13 +31,11 @@ class Emotion_model1:
     def gen_emotion(self):
         return choice(self.emotion_dict)
 
-    def predict_from_folder(self, folder_path):
+    def predict_from_folder(self, samples):
         val_transform = transforms.Compose([
         transforms.ToTensor()])
         emo_score = defaultdict(list)
-        for img_path in glob.glob(folder_path + "/*.jpg"):
-            img = cv2.imread(img_path)
-            
+        for img in samples:
             if self.crop_strategy == "MTCNN":
                 crop = self.cropper(img)
                 if crop != None:
