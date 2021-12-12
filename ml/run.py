@@ -39,9 +39,9 @@ def app(cfg : DictConfig) -> None:
         max_emo = 'neutral'
     prediction["emo"] = max_emo
     prediction["num_emo_faces"] = emo_pred[1]
-    prediction["open_images_time"] = period1
-    prediction["face_recognition_time"] = period2
-    prediction["emotion_recognition_time"] = period3
+    prediction["open_images_time"] = round(float(period1),4)
+    prediction["face_recognition_time"] = round(float(period2),4)
+    prediction["emotion_recognition_time"] = round(float(period3),4)
     print(prediction)
     print(prediction)
 
