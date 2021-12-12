@@ -35,10 +35,12 @@ class Emotion_model1:
         val_transform = transforms.Compose([
         transforms.ToTensor()])
         emo_score = defaultdict(list)
+        num_emo_faces = 0 
         for img in samples:
             if self.crop_strategy == "MTCNN":
                 crop = self.cropper(img)
                 if crop != None:
+                    num_emo_faces += 1
                     crop = crop.permute(1,2,0).detach().numpy()
                     gray_crop = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
                     X = gray_crop/256
@@ -65,4 +67,4 @@ class Emotion_model1:
                     emo_score[emo_name].append(p)
         for k in emo_score.keys():
             emo_score[k] = np.mean(emo_score[k])
-        return dict(emo_score)
+        return [dict(emo_score), num_emo_faces]

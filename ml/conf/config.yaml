@@ -4,9 +4,9 @@ samples_folder: "/samples"
 output_folder: "/out"
 params:
   image_size: 256
-  threshold: 0.6
+  threshold: 0.7
   return_all: False
-  offset: 1
+  offset: 2
   simularity_strategy: "pixel_mse"
   simularity_threshold: 0.04
 emo_params: 
