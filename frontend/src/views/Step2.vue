@@ -94,11 +94,13 @@
 
       <div>Similarity with etalon: {{mean_dist}} </div>
       <div>The task was: {{curTask}} </div>
+      <div>Server recognised: {{emo}} </div>
+
       <br>
-      <h2 v-if="(verified==='Yes')&&(mean_dist===curTask)">YOU ARE LEGIT!</h2>
+      <h2 v-if="(verified==='Yes')&&(mean_dist==curTask)">YOU ARE LEGIT!</h2>
       <h2 v-else>You are NOT totally legit.</h2>
       <br>
-      <div>Server recognised: {{emo}} </div>
+
       <div>Number of photos where face was recognised: {{num_emo_faces}} </div>
       <div>Similarity between captured photos: {{mean_sim_dist}} </div>
       <div>Преоразование полученных данных в секундах: {{open_images_time}}</div>
