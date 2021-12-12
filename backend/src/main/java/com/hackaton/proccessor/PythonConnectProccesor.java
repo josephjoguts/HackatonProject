@@ -21,10 +21,10 @@ public class PythonConnectProccesor {
     @Autowired
     StatusFactory statusFactory;
     private Integer currPhotoCount = 0;
-    private String defPhoto = "photos/test0.png";
+    private String defPhoto = "photos/test0.jpg";
     private void runPythonScript(String path) throws IOException, InterruptedException {
         File f = new File(defPhoto);
-        String pythonScript = String.format("ml/venv/Scripts./python ml/run.py samples_folder=%s template_path=%s", path, f.getAbsolutePath());
+        String pythonScript = String.format("ml/venv/Scripts./python ml/run.py samples_folder=\"%s\" template_path=\"%s\"", path, f.getAbsolutePath());
 
         Process p = Runtime.getRuntime().exec(pythonScript);
         p.waitFor();
@@ -35,9 +35,9 @@ public class PythonConnectProccesor {
         BufferedReader stdError = new BufferedReader(new
                 InputStreamReader(p.getErrorStream()));
         stdError.lines().forEach(System.out::println);
-        stdInput.lines().forEach(System.out::println);
         String answer = stdInput.readLine();
-        FromModel ready = tools.getMapper().reader().readValue(answer, FromModel.class);
+
+        FromModel ready = tools.getMapper().reader().readValue(answer.replace("\'","\""), FromModel.class);
         System.out.println(answer);
         statusFactory.refreshStatus(Statuses.READY, ready, statusFactory.getStatusInstance().getTaskEmotion());
         //status.setMessage(answer);
@@ -52,11 +52,11 @@ public class PythonConnectProccesor {
             folder.mkdir();
         }
         String forDecode = imageString.substring(23);
-        File f = new File(String.format("photos/test%d.png",currPhotoCount));
+        File f = new File(String.format("photos/test%d.jpg",currPhotoCount));
         byte[] s = tools.getDecoder().decode(forDecode);
         InputStream is = new ByteArrayInputStream(s);
         BufferedImage newBi = ImageIO.read(is);
-        ImageIO.write(newBi, "png", f);
+        ImageIO.write(newBi, "jpg", f);
         currPhotoCount++;
         status.setStatus(Statuses.WRITING);
         if(currPhotoCount.equals(photoCount)){
@@ -72,11 +72,11 @@ public class PythonConnectProccesor {
         if(!folder.exists()){
             folder.mkdir();
         }
-        File f = new File("photos/defaultPhoto.png");
+        File f = new File("photos/defaultPhoto.jpg");
         byte[] s = tools.getDecoder().decode(defPhoto.substring(23));
         InputStream is = new ByteArrayInputStream(s);
         BufferedImage newBi = ImageIO.read(is);
-        ImageIO.write(newBi, "png", f);
+        ImageIO.write(newBi, "jpg", f);
         this.defPhoto = f.getAbsolutePath();
     }
 }

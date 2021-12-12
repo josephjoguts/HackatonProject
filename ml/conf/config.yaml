@@ -6,7 +6,7 @@ params:
   image_size: 256
   threshold: 0.6
   return_all: False
-  offset: 2
+  offset: 1
   simularity_strategy: "pixel_mse"
   simularity_threshold: 0.04
 emo_params: 
