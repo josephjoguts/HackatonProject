@@ -96,9 +96,11 @@
         <h3 v-if="verified==='Yes'">Seems like you are a human!</h3>
         <h3 v-else>Seems like you are NOT a human!</h3>
 
-        <div>Similarity: {{mean_dist}} </div>
+        <div>Similarity with etalon: {{mean_dist}} </div>
         <div>The task was: {{curTask}} </div>
         <div>Server recognised: {{emo}} </div>
+        <div>Number of photos where face was recognised: {{num_emo_faces}} </div>
+        <div>Similarity between captured photos: {{mean_sim_dist}} </div>
 
         <div class="column is-half">
           <h4 class="title is-4">Overall time:</h4>
@@ -139,6 +141,8 @@ export default {
       verified: 'NaN',
       mean_dist: 0,
       emo: "NaN",
+      num_emo_faces: 0,
+      mean_sim_dist: 0,
 
       isCameraOpen: false,
       isPhotoTaken: false,
@@ -276,6 +280,8 @@ export default {
               context.verified = response.verified
               context.mean_dist = response.mean_dist
               context.emo = response.emo
+              context.num_emo_faces = response.num_emo_faces
+              context.mean_sim_dist = response.mean_sim_dist
             } catch (e) {
               response = e
             }
