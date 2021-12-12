@@ -84,4 +84,9 @@ body {
     animation-duration: 1s;
   }
 
+.pointed-no-scale:hover {
+  cursor: pointer;
+  animation-duration: 1s;
+}
+
 </style>
