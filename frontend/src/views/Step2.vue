@@ -89,14 +89,17 @@
 
     <div class="time-is-over-box" v-if="isFinished">
       <h1>Time is over.</h1>
-      <h3 v-if="verified==='Yes'">Seems like you are a human!</h3>
-      <h3 v-else>Seems like you are NOT a human!</h3>
+      <h3 v-if="verified==='Yes'">You are verified with you registration photo</h3>
+      <h3 v-else>You are NOT verified with you registration photo</h3>
 
       <div>Similarity with etalon: {{mean_dist}} </div>
       <div>The task was: {{curTask}} </div>
       <div>Server recognised: {{emo}} </div>
       <div>Number of photos where face was recognised: {{num_emo_faces}} </div>
       <div>Similarity between captured photos: {{mean_sim_dist}} </div>
+      <div>Преоразование полученных данных в sec{{open_images_time}}</div>
+      <div>Распознование лица в sec{{face_recognition_time}}</div>
+      <div>Распознование эмоции в sec{{emotion_recognition_time}}</div>
     </div>
 
   </div>
@@ -131,7 +134,9 @@ export default {
       emo: "NaN",
       num_emo_faces: 0,
       mean_sim_dist: 0,
-
+      open_images_time:0,
+      face_recognition_time:0,
+      emotion_recognition_time:0,
       isCameraOpen: false,
       isPhotoTaken: false,
       isShotPhoto: false,
@@ -258,7 +263,7 @@ export default {
           timesRun += 1
           await _callback(photoCount)
 
-          if(timesRun === photoCount){
+          if(timesRun >= photoCount){
             clearInterval(intervalFn)
 
             let response = null
@@ -272,6 +277,9 @@ export default {
               context.emo = response.data.emo
               context.num_emo_faces = response.data.num_emo_faces
               context.mean_sim_dist = response.data.mean_sim_dist
+              context.open_images_time = response.data.open_images_time
+              context.face_recognition_time = response.data.face_recognition_time
+              context.emotion_recognition_time = response.data.emotion_recognition_time
             } catch (e) {
               response = e
             }

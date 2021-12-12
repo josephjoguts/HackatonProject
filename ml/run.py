@@ -27,10 +27,12 @@ def app(cfg : DictConfig) -> None:
         img = Image.open(img_path)
         images.append(img)
     period1 = time.time() - start_time
+    time1 = time.time()
     prediction = model.gen_simularity_by_template(template_im, images)
-    period2 = time.time() - period1
+    period2 = time.time() - time1
+    time2 = time.time()
     emo_pred = emo_model.predict_from_folder(images)
-    period3 = time.time() - period2
+    period3 = time.time() - time2
     if (len(emo_pred[0]) == 0):
         max_emo = 'neutral'
     else:
