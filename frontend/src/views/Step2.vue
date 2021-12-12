@@ -267,7 +267,7 @@ export default {
 
           timesRun += 1
 
-          if(timesRun > photoCount){
+          if(timesRun >= photoCount){
             clearInterval(intervalFn)
           }
 
