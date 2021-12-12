@@ -1,8 +1,6 @@
 <template>
     <div class="time-box">
-      <a id="min">{{ value.min }}</a>:
-      <a id="sec">{{ value.sec }}</a>:
-      <a id="mill">{{ value.mill }}</a>
+      {{ value.min }}:{{ value.sec }}:{{ value.mill }}
     </div>
 </template>
 
@@ -23,8 +21,9 @@ export default {
   font: small-caps lighter 43px/150% "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
   text-align: left;
   width: 50%;
-  margin: 40px auto;
-  border-left: 5px solid #2fab95;
+  margin-left: auto;
+  margin-right: auto;
+  border-left: 5px solid #00d1b2;
   padding: 20px;
 }
 </style>

@@ -5,7 +5,7 @@ import store from './store'
 import VueCompositionAPI from '@vue/composition-api'
 import VueSlider from 'vue-slider-component'
 import components from '@/components'
-import 'vue-slider-component/theme/antd.css'
+import 'vue-slider-component/theme/default.css'
 
 Vue.use(VueCompositionAPI)
 Vue.component('VueSlider', VueSlider)
