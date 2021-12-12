@@ -19,7 +19,7 @@ public class PythonConnectProccesor {
     //TODO путь к папке с картинками видео
     //TODO user default photo
     private void runPythonScript(String path) throws IOException {
-        var p = Runtime.getRuntime().exec(String.format("python ../ml/main.py %s %s", path, defPhoto));
+        var p = Runtime.getRuntime().exec(String.format("python ../ml/run.py samples_folder=%s template_path=%s 2>log.txt", path, defPhoto));
         BufferedReader stdInput = new BufferedReader(new
                 InputStreamReader(p.getInputStream()));
 
