@@ -1,5 +1,6 @@
 package com.hackaton.service;
 
+import com.hackaton.model.FromModel;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -16,7 +17,7 @@ public class StatusFactory {
     private void constructFactory(){
         statusInstance = new Status();
     }
-    public void refreshStatus(Statuses st, String value){
+    public void refreshStatus(Statuses st, FromModel value, String taskEmotion){
         synchronized (this) {
             statusInstance = new Status();
             statusInstance.setStatus(st);

@@ -1,6 +1,7 @@
 package com.hackaton.proccessor;
 
 import com.hackaton.Tools;
+import com.hackaton.model.FromModel;
 import com.hackaton.service.Status;
 import com.hackaton.service.StatusFactory;
 import com.hackaton.service.Statuses;
@@ -23,7 +24,8 @@ public class PythonConnectProccesor {
     private String defPhoto = "photos/test0.png";
     private void runPythonScript(String path) throws IOException, InterruptedException {
         File f = new File(defPhoto);
-        String pythonScript = String.format("ml/venv/Scripts./python ml/main.py %s %s", path, f.getAbsolutePath());
+        String pythonScript = String.format("ml/venv/Scripts./python ml/run.py samples_folder=%s template_path=%s", path, f.getAbsolutePath());
+
         Process p = Runtime.getRuntime().exec(pythonScript);
         p.waitFor();
         BufferedReader stdInput = new BufferedReader(new
@@ -31,9 +33,12 @@ public class PythonConnectProccesor {
 
         BufferedReader stdError = new BufferedReader(new
                 InputStreamReader(p.getErrorStream()));
+        stdError.lines().forEach(System.out::println);
+        stdInput.lines().forEach(System.out::println);
         String answer = stdInput.readLine();
+        FromModel ready = tools.getMapper().reader().readValue(answer, FromModel.class);
         System.out.println(answer);
-        statusFactory.refreshStatus(Statuses.READY, answer);
+        statusFactory.refreshStatus(Statuses.READY, ready, statusFactory.getStatusInstance().getTaskEmotion());
         //status.setMessage(answer);
         //status.setStatus(Statuses.READY);
     }
@@ -65,7 +70,7 @@ public class PythonConnectProccesor {
             folder.mkdir();
         }
         File f = new File("photos/defaultPhoto.png");
-        byte[] s = tools.getDecoder().decode(defPhoto);
+        byte[] s = tools.getDecoder().decode(defPhoto.substring(23));
         InputStream is = new ByteArrayInputStream(s);
         BufferedImage newBi = ImageIO.read(is);
         ImageIO.write(newBi, "png", f);

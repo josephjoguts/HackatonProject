@@ -32,6 +32,7 @@ public class MainController {
     public ResponseEntity<Map<String,String>> controller(@RequestBody ClientRequest clientRequest) throws IOException, InterruptedException {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("Status","Working");
+        statusFactory.refreshStatus(Statuses.WRITING,null, clientRequest.getTask());
         proccesor.processClientData(clientRequest.getPhotoCount(), clientRequest.getImageString());
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
@@ -50,12 +51,12 @@ public class MainController {
             var st = statusFactory.getStatusInstance().getStatus();
             if(st == Statuses.READY){
                 LinkedHashMap<String,String> res = new LinkedHashMap<>();
-                res.put("Message", status.getMessage());
+                //res.put("Message", status.getMessage());
                 return new ResponseEntity<>(res, HttpStatus.OK);
             }
         }
         LinkedHashMap<String,String> res = new LinkedHashMap<>();
-        res.put("Message", statusFactory.getStatusInstance().getMessage());
+        //res.put("Message", statusFactory.getStatusInstance().getMessage());
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
