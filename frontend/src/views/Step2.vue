@@ -87,31 +87,19 @@
     </div>
 
 
-    <div class="time-is-over-box" v-if="isFinished"><h1>Time is over.</h1></div>
+    <div class="time-is-over-box" v-if="isFinished">
+      <h1>Time is over.</h1>
+      <h3 v-if="verified==='Yes'">Seems like you are a human!</h3>
+      <h3 v-else>Seems like you are NOT a human!</h3>
 
-    <div class="modal" :class="{ isActive: isFinished }">
-      <div class="modal-background"></div>
-      <div class="modal-content">
-
-        <h3 v-if="verified==='Yes'">Seems like you are a human!</h3>
-        <h3 v-else>Seems like you are NOT a human!</h3>
-
-        <div>Similarity with etalon: {{mean_dist}} </div>
-        <div>The task was: {{curTask}} </div>
-        <div>Server recognised: {{emo}} </div>
-        <div>Number of photos where face was recognised: {{num_emo_faces}} </div>
-        <div>Similarity between captured photos: {{mean_sim_dist}} </div>
-
-        <div class="column is-half">
-          <h4 class="title is-4">Overall time:</h4>
-          <timer v-model="paddedCurrentTime"></timer>
-        </div>
-
-      </div>
-      <button class="modal-close is-large" aria-label="close"></button>
+      <div>Similarity with etalon: {{mean_dist}} </div>
+      <div>The task was: {{curTask}} </div>
+      <div>Server recognised: {{emo}} </div>
+      <div>Number of photos where face was recognised: {{num_emo_faces}} </div>
+      <div>Similarity between captured photos: {{mean_sim_dist}} </div>
     </div>
-  </div>
 
+  </div>
 
 </template>
 
@@ -277,16 +265,17 @@ export default {
             try {
               console.log('waiting status...')
               response = await axios.get('http://localhost:8080/status')
-              context.verified = response.verified
-              context.mean_dist = response.mean_dist
-              context.emo = response.emo
-              context.num_emo_faces = response.num_emo_faces
-              context.mean_sim_dist = response.mean_sim_dist
+              _stop()
+              console.log(response)
+              context.verified = response.data.verified
+              context.mean_dist = response.data.mean_dist
+              context.emo = response.data.emo
+              context.num_emo_faces = response.data.num_emo_faces
+              context.mean_sim_dist = response.data.mean_sim_dist
             } catch (e) {
               response = e
             }
-            _stop()
-            console.log(response)
+
           }
         }, 500);
 
