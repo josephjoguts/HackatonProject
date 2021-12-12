@@ -1,35 +1,44 @@
 package com.hackaton.proccessor;
 
 import com.hackaton.Tools;
-import com.hackaton.model.ClientRequest;
+import com.hackaton.service.Status;
+import com.hackaton.service.StatusFactory;
+import com.hackaton.service.Statuses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Objects;
 
 @Service
 public class PythonConnectProccesor {
     @Autowired
     Tools tools;
+    @Autowired
+    Status status;
+    @Autowired
+    StatusFactory statusFactory;
     private Integer currPhotoCount = 0;
     private String defPhoto = "photos/test0.png";
-
-    private void runPythonScript(String path) throws IOException {
+    private void runPythonScript(String path) throws IOException, InterruptedException {
         File f = new File(defPhoto);
-        var p = Runtime.getRuntime().exec(String.format("python ml/main.py %s %s", path, f.getAbsolutePath()));
+        String pythonScript = String.format("ml/venv/Scripts./python ml/main.py %s %s", path, f.getAbsolutePath());
+        Process p = Runtime.getRuntime().exec(pythonScript);
+        p.waitFor();
         BufferedReader stdInput = new BufferedReader(new
                 InputStreamReader(p.getInputStream()));
 
         BufferedReader stdError = new BufferedReader(new
                 InputStreamReader(p.getErrorStream()));
-
-        System.out.println(stdInput.readLine());
+        String answer = stdInput.readLine();
+        System.out.println(answer);
+        statusFactory.refreshStatus(Statuses.READY, answer);
+        //status.setMessage(answer);
+        //status.setStatus(Statuses.READY);
     }
 
-    public void processClientData(Integer photoCount, String imageString) throws IOException {
+    public void processClientData(Integer photoCount, String imageString) throws IOException, InterruptedException {
         File folder = new File("photos");
         if(!folder.exists()){
             folder.mkdir();
@@ -41,6 +50,7 @@ public class PythonConnectProccesor {
         BufferedImage newBi = ImageIO.read(is);
         ImageIO.write(newBi, "png", f);
         currPhotoCount++;
+        status.setStatus(Statuses.WRITING);
         if(currPhotoCount.equals(photoCount)){
             runPythonScript(folder.getAbsolutePath());
         }
