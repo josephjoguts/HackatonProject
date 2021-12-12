@@ -29,6 +29,7 @@ export default {
   font: small-caps lighter 43px/150% "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
   text-align: left;
   //width: 50%;
+  position: absolute;
   left: 40%;
   /*margin-left: auto;
   margin-right: auto;*/

@@ -94,12 +94,16 @@
 
       <div>Similarity with etalon: {{mean_dist}} </div>
       <div>The task was: {{curTask}} </div>
+      <br>
+      <h2 v-if="(verified==='Yes')&&(mean_dist===curTask)">YOU ARE LEGIT!</h2>
+      <h2 v-else>You are NOT totally legit.</h2>
+      <br>
       <div>Server recognised: {{emo}} </div>
       <div>Number of photos where face was recognised: {{num_emo_faces}} </div>
       <div>Similarity between captured photos: {{mean_sim_dist}} </div>
-      <div>Преоразование полученных данных в sec{{open_images_time}}</div>
-      <div>Распознование лица в sec{{face_recognition_time}}</div>
-      <div>Распознование эмоции в sec{{emotion_recognition_time}}</div>
+      <div>Преоразование полученных данных в секундах: {{open_images_time}}</div>
+      <div>Распознование лица в секундах: {{face_recognition_time}}</div>
+      <div>Распознование эмоции в секундах: {{emotion_recognition_time}}</div>
     </div>
 
   </div>
@@ -260,12 +264,18 @@ export default {
         var timesRun = 0
         var intervalFn = setInterval(async function(){
           console.log(timesRun)
+
           timesRun += 1
+
+          if(timesRun > photoCount){
+            clearInterval(intervalFn)
+          }
+
           await _callback(photoCount)
 
           if(timesRun >= photoCount){
             clearInterval(intervalFn)
-
+            _stop()
             let response = null
             try {
               console.log('waiting status...')
