@@ -30,6 +30,8 @@ def app(cfg : DictConfig) -> None:
         max_emo = 'neutral'
     else:
         max_emo = max(emo_pred[0].items(), key=operator.itemgetter(1))[0]
+    if max_emo == "disguest" or max_emo =="fear":
+        max_emo = 'neutral'
     prediction["emo"] = max_emo
     prediction["num_emo_faces"] = emo_pred[1]
     print(prediction)
