@@ -25,51 +25,59 @@
       <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="450" :height="337.5"></canvas>
     </div>
 
-    <div v-if="isCameraOpen && !isLoading" class="settings-box">
-      <div class="task-box">
-        <div class="row">
-          <h3>Task: {{ curTask }}</h3>
+    <div v-if="isCameraOpen && !isLoading" class="columns is-8 is-multiline is-mobile" style="margin-top: 15px; width: 100%">
+      <div class="column is-half">
+        <h4 class="title is-4">Settings</h4>
+
+        <div class="task-box">
+          <div class="row">
+            <h3>Task: {{ curTask }}</h3>
+          </div>
+
+          <select v-model="curTask" :disabled="isCapturing">
+            <option disabled value="">Please select one</option>
+            <option>neutral</option>
+            <option>happiness</option>
+            <option>surprise</option>
+            <option>sadness</option>
+            <option>anger</option>
+            <option>disgust</option>
+            <option>fear</option>
+          </select>
         </div>
 
-        <select v-model="curTask" :disabled="isCapturing">
-          <option disabled value="">Please select one</option>
-          <option>neutral</option>
-          <option>happiness</option>
-          <option>surprise</option>
-          <option>sadness</option>
-          <option>anger</option>
-          <option>disgust</option>
-          <option>fear</option>
-        </select>
-      </div>
-
-      <div class="slider-box" >
-        <div class="row">
-          <h3>Time interval: {{ interval }} ms</h3>
+        <div class="slider-box" >
+          <div class="row">
+            <h3>Time interval: {{ interval }} ms</h3>
+          </div>
+          <vue-slider
+              :disabled="isCapturing" style="width: 100%"
+              ref="slider"
+              v-model="interval"
+              v-bind="options"
+          ></vue-slider>
         </div>
-        <vue-slider
-            :disabled="isCapturing" style="width: 100%"
-            ref="slider"
-            v-model="interval"
-            v-bind="options"
-        ></vue-slider>
-      </div>
 
-      <div class="slider-box" >
-        <div class="row">
-          <h3>Length of video capture: {{ vidLen }} ms</h3>
+        <div class="slider-box" >
+          <div class="row">
+            <h3>Length of video capture: {{ vidLen }} ms</h3>
+          </div>
+          <vue-slider
+              :disabled="isCapturing" style="width: 100%"
+              ref="slider"
+              v-model="vidLen"
+              v-bind="options"
+          ></vue-slider>
         </div>
-        <vue-slider
-            :disabled="isCapturing" style="width: 100%"
-            ref="slider"
-            v-model="vidLen"
-            v-bind="options"
-        ></vue-slider>
+
       </div>
 
-
+      <div class="column is-half">
+        <h4 class="title is-4">Timer</h4>
+        <timer v-model="paddedCurrentTime"></timer>
+      </div>
     </div>
-    <br>
+
     <small v-if="!intervalsValid">Timespan of capturing is required to be above interval</small>
     <div v-if="isCameraOpen && !isLoading" class="camera-shoot">
       <button type="button" tip="Start capturing" class="button tip"
@@ -79,7 +87,7 @@
         <img class="tip" :class="{pointed: !isCapturing&&intervalsValid }" src="https://img.icons8.com/ios/50/000000/anonymous-mask.png"/>
       </button>
     </div>
-    <timer v-if="isCameraOpen && !isLoading" v-model="paddedCurrentTime"></timer>
+
 
     <div class="time-is-over-box" v-if="isFinished"><h1>Time is over.</h1></div>
 
